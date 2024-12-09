@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeX</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+    <!-- home section starts here  -->
+    <section id="b" class="home">
+        <div class="home-box">
+            <nav>
+                <div class="logo bars">
+                    <div class="bar">
+                        <i class="fa fa-bars"></i>
+                    </div>
+                    <h3>SafeX</h3>
+                </div>
+                <div class="menu">
+                    <div class="close">
+                        <i class="fa fa-close"></i>
+                    </div>
+                    <ul>
+                        <li><a href="#b"></a></li>
+                        <li><a href="#a"></a></li>
+                        <li><a href="crime_hotspots_with_names_map.html">Find hotspots</a></li>
+                        <li><a href="hotspot.html">Find safe route</a></li>
+                        <li><a href="safes.html">Take a safe shelter</a></li>
+                        <li><a href="community.html">Community alert</a></li>
+                        <li onclick="sendEmergencyNotification()"><a>⚠️Emergency SOS</a></li>
+
+
+                    </ul>
+                </div>
+                <div class="signup-login">
+                   
+                    <a href="report.html">Anonymous Crime Reporting</a>
+
+                </div>
+            </nav>
+
+            <div class="content">
+                <h5>SafeX</h5>
+                <h1>let's embark on your safe journey</h1>
+                <p style="font-weight: bold; color: #fcf8fa;">
+                    "Stay Informed, Stay Safe!"<br>
+                    Get real-time alerts and route updates to keep your travels secure and worry-free!
+                </p>
+                
+                
+            </div>
+        </div>
+    </section>
+    <!-- home section ends here  -->
+
+    <!-- travel section starts here  -->
+    <section id="a" class="travel">
+        <div class="container">
+            <div class="box box1">
+                <img src="planning.png" alt="">
+                <div class="content">
+                    <h4>Enhanced Safety Awareness</h4>
+                    <p>The system aims to empower users by providing real-time information about crime hotspots, helping them make informed decisions about their travel routes and increasing their overall awareness of their surroundings.</p>
+                </div>
+            </div>
+            <div class="box box2">
+                <img src="map.png" alt="">
+                <div class="content">
+                    <h4>Safer Navigation Options</h4>
+                    <p>By integrating a Maps API, the project will offer safer alternative routes that avoid high-risk areas and ensure proximity to emergency services like police stations and hospitals, thereby enhancing the user's sense of security while navigating urban environments.</p>
+                </div>
+            </div>
+            <div class="box box3">
+                <img src="trust.png" alt="">
+                <div class="content">
+                    <h4>Community Engagement and Support</h4>
+                    <p>The use of geofencing technology to send real-time alerts about dangerous zones fosters a sense of community awareness and encourages users to support each other in maintaining urban safety, ultimately contributing to a safer environment for everyone.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- travel section ends here  -->
+
+    <!-- destinatons section starts here  -->
+    <section class="destinations">
+        <h4 class="label"></h4>
+        <div class="container">
+            <div class="container-box">
+                <h2 class="heading">Your Journey, Our Mission--Safety Redefined! </h2>
+               
+                <div class="content">
+                    <p>We harness data to reveal crime hotspots, guiding you to safer paths.
+                        Experience real-time alerts that keep you informed on the go.
+                        With an intuitive interface, navigating safely has never been easier.
+                        Join us in redefining urban travel—where safety meets innovation!</p>
+                    <a href="#">explore more <i class="fa fa-arrow-right"></i></a>
+                </div>
+            </div>
+          
+            <div class="gallery">
+                
+                <div class="box box1">
+                    <img src="Screenshot 2024-10-13 214313.png" alt="">
+                    <div class="text">
+                        <h2></h2>
+                    </div>
+                </div>
+                <div class="box box2">
+                    <img src="Screenshot 2024-10-14 231910.png" alt="">
+                    <div class="text">
+                        <h2>bali</h2>
+                   
+                </div>
+                </div>
+            
+                
+            </div>
+        </div>
+    </section>
+    <section class="feedback">
+        <div class="container">
+            <h4 class="label">user's voices</h4>
+            <h2 class="heading">user's voices</h2>
+            <p class="paragraph">
+                real stories from our user's community
+            </p>
+        </div>
+
+        <div class="voices">
+            <div class="voice box1">
+                <div class="profile">
+                    <img src="photo1.jpg" alt="">
+                    <div class="detail">
+                        <li>marvili davin</li>
+                        <li>traveler</li>
+                    </div>
+                </div>
+                <p>As someone who commutes daily through busy and sometimes unsafe parts of the city, this app has been a lifesaver. The real-time alerts about crime hotspots allow me to change my route on the fly, avoiding areas that I didn’t even know were risky. The fact that it offers safer alternatives while still keeping me on time is amazing. I now feel much more confident traveling, even late at nigh</p>
+            </div>
+            <div class="voice box2">
+                <div class="profile">
+                    <img src="photo2.jpg" alt="">
+                    <div class="detail">
+                        <li>marvin </li>
+                        <li>Student</li>
+                    </div>
+                </div>
+                <p>"I’ve always been cautious when traveling, especially in unfamiliar areas, but this app gives me peace of mind. The way it calculates alternative routes to avoid dangerous zones is incredibly useful. Plus, I appreciate how easy it is to use—I can quickly see where I’m headed and know that I’m staying safe. It’s like having a personal safety guide with me at all times!"</p>
+            </div>
+            <div class="voice box3">
+                <div class="profile">
+                    <img src="photo3.jpg" alt="">
+                    <div class="detail">
+                        <li>nita</li>
+                        <li>working professional</li>
+                    </div>
+                </div>
+                <p>"I was skeptical at first, but after using this app for a few weeks, I’m hooked. The real-time crime alerts have already helped me avoid a few sketchy situations while walking home after work. It’s simple to navigate, and I love how it suggests nearby safe places like police stations or hospitals. Now, I feel much more secure when traveling alone, especially during late hours"</p>
+            </div>
+            <div class="voice box4">
+                <div class="profile">
+                    <img src="photo4.jpg" alt="">
+                    <div class="detail">
+                        <li> davin</li>
+                        <li>freelancer</li>
+                    </div>
+                </div>
+                <p>"As a freelancer who travels across different parts of the city, I needed a solution that keeps me safe while on the go. This navigation system not only highlights dangerous areas but also reroutes me without much hassle. I’ve even started using the app to plan my daily routes in advance, making sure I avoid unsafe neighborhoods altogether. The peace of mind it offers is invaluable!"</p>
+            </div>
+            <div class="voice box5">
+                <div class="profile">
+                    <img src="photo5.jpg" alt="">
+                    <div class="detail">
+                        <li>ram</li>
+                        <li>business traveler</li>
+                    </div>
+                </div>
+                <p>"I’ve always been anxious about traveling to new places for work, but this app has made a world of difference. It doesn’t just show the quickest route; it shows the safest one. When I’m in a rush for a business meeting, it’s reassuring to know I’m being guided away from high-risk areas. The geofencing alerts are a bonus—they notify me as soon as I enter a dangerous zone. This app is now my go-to travel companion"</p>
+            </div>
+            <div class="voice box6">
+                <div class="profile">
+                    <img src="photo6.jpg" alt="">
+                    <div class="detail">
+                        <li>priya </li>
+                        <li>commutator</li>
+                    </div>
+                </div>
+                <p>"As someone who commutes daily through busy and sometimes unsafe parts of the city, this app has been a lifesaver. The real-time alerts about crime hotspots allow me to change my route on the fly, avoiding areas that I didn’t even know were risky. The fact that it offers safer alternatives while still keeping me on time is amazing. I now feel much more confident traveling, even late at night"</p>
+            </div>
+        </div>
+    </section>
+    <!-- feedback section ends here  -->
+
+    <section class="article">
+        <h4 class="label">Resources</h4>
+        <h2 class="heading">Latest Articles on Women Safety</h2>
+        <div class="container">
+            <div class="latest-article">
+                <a href="https://www.forbes.com/sites/forbestechcouncil/2023/05/12/top-five-technologies-that-can-improve-womens-safety/" target="_blank">
+                    <img src="hidden-game.jpg" alt="">
+                    <p>Women Empowerment</p>
+                    <h3>Top 5 Tech Innovations Enhancing Women’s Safety</h3>
+                </a>
+                <div class="author">
+                    <img src="photo7.jpg" alt="">
+                    <p>Rachel Adams - 8 min read</p>
+                </div>
+            </div>
+            <div class="more-article">
+                <div class="box box1">
+                    <div class="image">
+                        <a href="https://www.womansday.com/life/work-money/g27599394/self-defense-techniques-for-women/" target="_blank">
+                            <img src="family.jpg" alt="">
+                        </a>
+                    </div>
+                    <div class="text">
+                        <a href="https://www.womansday.com/life/work-money/g27599394/self-defense-techniques-for-women/" target="_blank">
+                            <h3>Essential Self-Defense Techniques Every Woman Should Know</h3>
+                        </a>
+                        <li>Safety & Security - 6 min read</li>
+                    </div>
+                </div>
+                <div class="box box2">
+                    <div class="image">
+                        <a href="https://www.nytimes.com/2021/06/14/travel/women-travel-safety.html" target="_blank">
+                            <img src="food-article.jpg" alt="">
+                        </a>
+                    </div>
+                    <div class="text">
+                        <a href="https://www.nytimes.com/2021/06/14/travel/women-travel-safety.html" target="_blank">
+                            <h3>Travel Safety Tips for Women: Staying Secure While Exploring</h3>
+                        </a>
+                        <li>Women & Travel - 5 min read</li>
+                    </div>
+                </div>
+                <div class="box box3">
+                    <div class="image">
+                        <a href="https://www.safewise.com/blog/best-personal-safety-apps-women/" target="_blank">
+                            <img src="budget-travel.jpg" alt="">
+                        </a>
+                    </div>
+                    <div class="text">
+                        <a href="https://www.safewise.com/blog/best-personal-safety-apps-women/" target="_blank">
+                            <h3>Navigating the City: Top Apps for Women's Safety in Urban Areas</h3>
+                        </a>
+                        <li>Tech & Safety - 7 min read</li>
+                    </div>
+                </div>
+                <div class="box box4">
+                    <div class="image">
+                        <a href="https://www.weforum.org/agenda/2021/09/building-safer-workplaces-for-women/" target="_blank">
+                            <img src="tips.jpg" alt="">
+                        </a>
+                    </div>
+                    <div class="text">
+                        <a href="https://www.weforum.org/agenda/2021/09/building-safer-workplaces-for-women/" target="_blank">
+                            <h3>Building a Safer Workplace: Empowering Women in the Workforce</h3>
+                        </a>
+                        <li>Workplace Safety - 6 min read</li>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- footer section starts here  -->
+    <footer>
+        <section class="footer">
+            <div class="container">
+                <div class="detail">
+                    <h3>SafeX</h3>
+                    <p>This project aims to develop a smart navigation system that prioritizes user safety in urban areas. By leveraging real-time data, the system detects crime hotspots and suggests safer alternative routes. It integrates geofencing technology to provide alerts when users approach high-risk zones. The user-friendly interface ensures easy navigation while keeping safety at the forefront. Ultimately, the goal is to enhance security and peace of mind for all users on their journeys.</p>
+                    <h5>get in touch</h5>
+                    <a href="#">safex@mail.com</a>
+                    <div class="social">
+                        <a href="#"><i class="fa fa-linkedin-square"></i></a>
+                        <a href="#"><i class="fa fa-facebook-square"></i></a>
+                        <a href="#"><i class="fa fa-twitter-square"></i></a>
+                    </div>
+                </div>
+                <div class="about-us">
+                    <h4>about us</h4>
+                    <li><a href="#">about us</a></li>
+                    <li><a href="#">our term</a></li>
+                    <li><a href="#">careers </a></li>
+                    <li><a href="#">mission and values</a></li>
+                    <li><a href="#">partnerships</a></li>
+                </div>
+                <div class="about-us">
+                    <h4>help</h4>
+                    <li><a href="#">FAQ</a></li>
+                 
+                    <li><a href="#">site map</a></li>
+                </div>
+                <div class="about-us">
+                    <h4>Resources</h4>
+                    <li><a href="#">newsletter</a></li>
+                    <li><a href="#">blog</a></li>
+                   
+                </div>
+            </div>
+
+            <div class="copyright">
+                <div>
+                    &copy;2024 - SafeX, inc, all rights reserved
+                </div>
+                <div>
+                    <a href="#">term & conditions</a>
+                    <a href="#">privacy policy</a>
+                </div>
+            </div>
+        </section>
+    </footer>
+    <!-- footer section ends here  -->
+    <script>
+        let userLat;
+        let userLng;
+
+        // Function to get user's current location
+        function getUserLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    userLat = position.coords.latitude;
+                    userLng = position.coords.longitude;
+                }, error => {
+                    console.error("Error getting location:", error);
+                });
+            } else {
+                console.error("Geolocation is not supported by this browser.");
+            }
+        }
+
+        // Call the function to get the user's location
+        getUserLocation();
+
+        // Function to send SMS using fetch
+        function sendSMS(phoneNumber, message) {
+            fetch('http://localhost:3000/send-sms', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ phoneNumber, message })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text();
+            })
+            .then(data => {
+                console.log(`SMS sent successfully to ${phoneNumber}:`, data);
+            })
+            .catch(error => {
+                console.error(`Error sending SMS to ${phoneNumber}:`, error);
+                alert(`Failed to send SMS to ${phoneNumber}`);
+            });
+        }
+
+        function sendEmergencyNotification() {
+            const emergencyContact = "+917200748690";
+            const emergencyMessage = `Emergency Alert! Current location - Latitude: ${userLat}, Longitude: ${userLng}`;
+
+            // Check if userLat and userLng are defined
+            if (userLat !== undefined && userLng !== undefined) {
+                sendSMS(emergencyContact, emergencyMessage);
+                alert("Emergency notification sent!");
+            } else {
+                alert("Unable to send emergency notification. Location data is not available.");
+            }
+        }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.4/gsap.min.js" integrity="sha512-EZI2cBcGPnmR89wTgVnN3602Yyi7muWo8y1B3a8WmIv1J9tYG+udH4LvmYjLiGp37yHB7FfaPBo8ly178m9g4Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.4/ScrollTrigger.min.js" integrity="sha512-OzC82YiH3UmMMs6Ydd9f2i7mS+UFL5f977iIoJ6oy07AJT+ePds9QOEtqXztSH29Nzua59fYS36knmMcv79GOg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="script.js"></script>
+</body>
+
+
+
+</html>

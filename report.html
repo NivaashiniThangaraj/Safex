@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anonymous Crime Scene Report Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            
+            margin: 20px;
+            padding: 20px;
+            background-color: #d7d2d2;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin-top: 10px;
+        }
+        input, select, textarea {
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #c0b3b3;
+            border-radius: 4px;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #a93e3e49;
+            color: rgb(231, 77, 77);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #e10af1;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Report a Crime Scene Anonymously</h2>
+<p>Your report is confidential. Please provide as much detail as possible.</p>
+<form id="crimeReportForm" action="submit_report.php" method="POST">
+    <label for="crimeType">Type of Crime:</label>
+    <select id="crimeType" name="crimeType" required>
+        <option value="">--Select--</option>
+        <option value="theft">Theft</option>
+        <option value="assault">Assault</option>
+        <option value="vandalism">Vandalism</option>
+        <option value="drug-related">Drug-Related</option>
+        <option value="other">Other</option>
+    </select>
+
+    <label for="location">Location of the Incident:</label>
+    <input type="text" id="location" name="location" required>
+
+    <label for="date">Date of the Incident:</label>
+    <input type="date" id="date" name="date" required>
+
+    <label for="time">Time of the Incident:</label>
+    <input type="time" id="time" name="time" required>
+
+    <label for="description">Description of the Incident:</label>
+    <textarea id="description" name="description" rows="4" required></textarea>
+
+    <label for="evidence">Any Evidence (optional):</label>
+    <input type="text" id="evidence" name="evidence">
+
+    <label for="contact">Contact Information (optional):</label>
+    <input type="text" id="contact" name="contact" placeholder="Email or Phone">
+
+    <button type="submit">Submit Report</button>
+</form>
+
+</body>
+</html>

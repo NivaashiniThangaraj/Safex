@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeX</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <div class="overlay"></div>
+    <div class="login-box">
+        <h1 class="headline">WELCOME TO SafeX!</h1>
+        <br>
+        <br>
+        <p class="login-text">Login to continue</p>
+        <div class="button-container">
+            <button class="google-sign-in-button" id="login-button">Login with Google</button>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.1/firebase-messaging-compat.js"></script>
+    <script type="module" src="main.js"></script>
+    <script>
+        const firebaseConfig = {
+          apiKey: "AIzaSyBHagI9ZENewLr7c32RuHiRSiGuuUysW6Y",
+          authDomain: "collegeproject-698eb.firebaseapp.com",
+          databaseURL: "https://collegeproject-698eb-default-rtdb.firebaseio.com",
+          projectId: "collegeproject-698eb",
+          storageBucket: "collegeproject-698eb.appspot.com",
+          messagingSenderId: "819221579148",
+          appId: "1:819221579148:web:15eecb0c6c77daf36c02a9"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+    
+        // Sign out any user by default
+        firebase.auth().signOut().then(() => {
+          console.log('Signed out by default');
+        }).catch(error => {
+          console.error('Error signing out:', error);
+        });
+    
+        // Add login functionality
+        document.getElementById('login-button').addEventListener('click', () => {
+          const provider = new firebase.auth.GoogleAuthProvider();
+          firebase.auth().signInWithPopup(provider).then(result => {
+            const user = result.user;
+            console.log('User signed in:', user);
+            checkUserData(user.uid);
+          }).catch(error => {
+            console.error('Error signing in:', error);
+          });
+        });
+    
+        function checkUserData(uid) {
+          getUserData(uid).then(userData => {
+            console.log('User data:', userData);
+            if (userData && userData.quizResult) {
+              window.location.href = "index.html";
+            } else {
+              window.location.href = "register.html";
+            }
+          }).catch(error => {
+            console.error('Error getting user data:', error);
+          });
+        }
+    
+        function getUserData(uid) {
+          const userRef = db.collection('users').doc(uid);
+          return userRef.get().then(doc => {
+            if (doc.exists) {
+              return doc.data();
+            } else {
+              console.log('No such document!');
+              return null;
+            }
+          }).catch(error => {
+            console.error('Error getting document:', error);
+            return null;
+          });
+        }
+      </script>
+
+    <!-- Styles -->
+    <style>
+        /* General styling */
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #6E85B7, #B2ABF2);
+            color: #fff;
+        }
+
+        /* Overlay for subtle design effect */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: -1;
+        }
+
+        /* Login Box */
+        .login-box {
+            background-color: rgba(255, 255, 255, 0.15);
+            padding: 40px;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .login-box:hover {
+            transform: scale(1.02);
+        }
+
+        h1.headline {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+            color: #EAEAEA;
+        }
+
+        .login-text {
+            font-size: 18px;
+            margin-bottom: 30px;
+            color: #D4D4D4;
+        }
+
+        /* Button styling */
+        .google-sign-in-button {
+            background-color: #4285F4;
+            color: #fff;
+            font-size: 18px;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+            box-shadow: 0 4px 10px rgba(66, 133, 244, 0.3);
+        }
+
+        .google-sign-in-button:hover {
+            background-color: #357ae8;
+            transform: translateY(-2px);
+        }
+
+        /* General button container styling */
+        .button-container {
+            margin-top: 20px;
+        }
+
+        /* Responsive styling */
+        @media (max-width: 768px) {
+            .login-box {
+                width: 90%;
+                padding: 20px;
+            }
+
+            h1.headline {
+                font-size: 26px;
+            }
+
+            .google-sign-in-button {
+                width: 100%;
+                font-size: 16px;
+            }
+        }
+    </style>
+</body>
+</html>

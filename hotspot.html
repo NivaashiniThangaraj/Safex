@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Safe Route Map with Crime Hotspots</title>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" />
+    <!-- Leaflet Routing Machine CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            height: 80vh;
+            width: 90%;
+            margin: auto;
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <h1 style="text-align: center;">Safe Route Map with Crime Hotspots</h1>
+    <center>
+        <button 
+            onclick="location.reload();" 
+            style="
+                background-color: #FF7F7F; /* Pale red color */
+                color: white; /* Text color */
+                border: none; /* Remove border */
+                padding: 10px 20px; /* Vertical and horizontal padding */
+                text-align: center; /* Center text */
+                text-decoration: none; /* No underline */
+                display: inline-block; /* Inline-block for button */
+                font-size: 16px; /* Font size */
+                margin: 10px 0; /* Margin */
+                cursor: pointer; /* Pointer cursor on hover */
+                border-radius: 5px; /* Rounded corners */
+                transition: background-color 0.3s ease; /* Smooth transition */
+            " 
+            onmouseover="this.style.backgroundColor='#FF4D4D'" 
+            onmouseout="this.style.backgroundColor='#FF7F7F'">
+            Select Another Destination
+        </button>
+    </center>
+
+    <div id="map"></div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"></script>
+    <!-- Leaflet Routing Machine JS -->
+    <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+
+    <script>
+        // Initialize the map centered on PSG College of Technology coordinates
+        var startLocation = L.latLng(11.031356, 77.026936); // cit College of Technology
+        var currentLocation = L.latLng(11.031356, 77.026936); // Updated current location
+        var map = L.map('map').setView(currentLocation, 15); // Adjust zoom level for better view
+
+        // Load OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            maxZoom: 18,
+        }).addTo(map);
+
+        // Current location marker
+        var currentLocationIcon = L.icon({
+            iconUrl: 'taxi.png', // Ensure this path is correct
+            iconSize: [70, 70] // Adjust size if necessary
+        });
+        var marker = L.marker(currentLocation, { icon: currentLocationIcon }).addTo(map); // Marker for the current location
+
+        var endMarker, previousEndMarker, previousEndLocation, routeControl;
+        var currentPosition = currentLocation; // Start position set to updated current location
+
+        // Complete list of crime hotspots
+           // Complete list of crime hotspots
+           var crimeHotspots =[
+    { lat: 20.6560751832893, lng: 84.99063158021784, name: 'Viman Nagar, Pune', crimeType: 'Theft', hour: 9 },
+    { lat: 26.1085083513506, lng: 77.50534272437356, name: 'Park Street, Kolkata', crimeType: 'Fraud', hour: 19 },
+    { lat: 14.57162515919001, lng: 74.18564484780643, name: 'Park Street, Kolkata', crimeType: 'Vandalism', hour: 4 },
+    { lat: 24.05872617447184, lng: 78.59888216582695, name: 'Koramangala, Bangalore', crimeType: 'Burglary', hour: 0 },
+    { lat: 16.57114368482753, lng: 78.54417260154854, name: 'Marine Drive, Mumbai', crimeType: 'Burglary', hour: 1 },
+    { lat: 14.83187621264949, lng: 85.26506446283611, name: 'Chandni Chowk, Delhi', crimeType: 'Vandalism', hour: 2 },
+    { lat: 19.24777269142771, lng: 77.39405252595007, name: 'Marine Drive, Mumbai', crimeType: 'Robbery', hour: 1 },
+    { lat: 26.58707879855623, lng: 86.14388344127694, name: 'Koramangala, Bangalore', crimeType: 'Assault', hour: 13 },
+    { lat: 13.91516731944033, lng: 86.48701325174423, name: 'Connaught Place, Delhi', crimeType: 'Theft', hour: 7 },
+    { lat: 24.97636503418032, lng: 80.1880806228484, name: 'Viman Nagar, Pune', crimeType: 'Vandalism', hour: 18 },
+    { lat: 19.2471630532647, lng: 77.30163077812593, name: 'MG Road, Bangalore', crimeType: 'Burglary', hour: 14 },
+    { lat: 20.79857891732187, lng: 83.94058629982791, name: 'Koramangala, Bangalore', crimeType: 'Assault', hour: 19 },
+    { lat: 26.41613039633812, lng: 86.58688448415243, name: 'Connaught Place, Delhi', crimeType: 'Fraud', hour: 12 },
+    { lat: 28.19761738441307, lng: 83.09315259179605, name: 'Viman Nagar, Pune', crimeType: 'Harassment', hour: 21 },
+    { lat: 27.06507327263972, lng: 84.38405705861919, name: 'MG Road, Bangalore', crimeType: 'Theft', hour: 20 },
+    { lat: 25.04316525329692, lng: 79.60128816864486, name: 'Koramangala, Bangalore', crimeType: 'Robbery', hour: 23 },
+    { lat: 20.94483566208137, lng: 81.63523261918926, name: 'Park Street, Kolkata', crimeType: 'Burglary', hour: 6 },
+    { lat: 21.91578662200472, lng: 76.47154022191776, name: 'Connaught Place, Delhi', crimeType: 'Theft', hour: 14 },
+    { lat: 14.83479237053758, lng: 79.14908922992547, name: 'Chandni Chowk, Delhi', crimeType: 'Fraud', hour: 3 },
+    { lat: 26.64711962782313, lng: 83.7608158722186, name: 'Marine Drive, Mumbai', crimeType: 'Assault', hour: 15 },
+    { lat: 24.0491804893797, lng: 85.14682464413832, name: 'Viman Nagar, Pune', crimeType: 'Burglary', hour: 22 },
+    { lat: 22.94515925993697, lng: 86.26571419607126, name: 'MG Road, Bangalore', crimeType: 'Vandalism', hour: 5 },
+    { lat: 27.89469059623595, lng: 78.41480605887568, name: 'Connaught Place, Delhi', crimeType: 'Harassment', hour: 8 },
+    { lat: 25.01464518801763, lng: 85.54693363401944, name: 'Marine Drive, Mumbai', crimeType: 'Theft', hour: 11 },
+    { lat: 17.70632709170489, lng: 84.16663221444286, name: 'Koramangala, Bangalore', crimeType: 'Fraud', hour: 17 },
+    { lat: 14.8498356805047, lng: 87.08467240179723, name: 'Chandni Chowk, Delhi', crimeType: 'Assault', hour: 10 },
+    { lat: 18.42131819552487, lng: 79.2661173621315, name: 'Viman Nagar, Pune', crimeType: 'Vandalism', hour: 20 },
+    { lat: 19.78754285126056, lng: 76.87201579299367, name: 'MG Road, Bangalore', crimeType: 'Burglary', hour: 16 },
+    { lat: 15.57616941879388, lng: 81.93461782859256, name: 'Park Street, Kolkata', crimeType: 'Assault', hour: 13 },
+    { lat: 20.76383630484092, lng: 87.53692509710694, name: 'Connaught Place, Delhi', crimeType: 'Robbery', hour: 18 },
+    { lat: 14.4952170714208, lng: 78.83208982245084, name: 'Marine Drive, Mumbai', crimeType: 'Vandalism', hour: 19 },
+    { lat: 21.32050236229244, lng: 82.79783250464865, name: 'Chandni Chowk, Delhi', crimeType: 'Burglary', hour: 4 },
+    { lat: 22.27186348505463, lng: 84.53865956914383, name: 'Park Street, Kolkata', crimeType: 'Fraud', hour: 22 },
+    { lat: 23.18917652895153, lng: 85.91716436650704, name: 'Koramangala, Bangalore', crimeType: 'Harassment', hour: 14 },
+    { lat: 20.62645832178224, lng: 82.40179681328458, name: 'Connaught Place, Delhi', crimeType: 'Burglary', hour: 12 },
+    { lat: 19.33812031682888, lng: 80.28325379993196, name: 'MG Road, Bangalore', crimeType: 'Theft', hour: 15 },
+    { lat: 15.63441728413753, lng: 81.74132472429336, name: 'Viman Nagar, Pune', crimeType: 'Vandalism', hour: 5 },
+    { lat: 27.2299467894277, lng: 85.27783260394622, name: 'Marine Drive, Mumbai', crimeType: 'Assault', hour: 2 },
+    { lat: 24.27688403782488, lng: 77.72485167876282, name: 'Park Street, Kolkata', crimeType: 'Robbery', hour: 9 },
+    { lat: 22.0584398932305, lng: 80.19156221249144, name: 'Connaught Place, Delhi', crimeType: 'Theft', hour: 18 },
+    { lat: 23.16107126744784, lng: 84.26834217108357, name: 'Koramangala, Bangalore', crimeType: 'Fraud', hour: 7 },
+    { lat: 25.69676549136956, lng: 81.98263814030822, name: 'MG Road, Bangalore', crimeType: 'Assault', hour: 16 },
+    { lat: 15.63057632946906, lng: 86.05098175683252, name: 'Chandni Chowk, Delhi', crimeType: 'Vandalism', hour: 10 },
+    { lat: 26.42250856473632, lng: 84.65308957075346, name: 'Marine Drive, Mumbai', crimeType: 'Robbery', hour: 11 },
+    { lat: 24.86121273506368, lng: 83.22864428343292, name: 'Viman Nagar, Pune', crimeType: 'Burglary', hour: 14 },
+    { lat: 17.68495305361673, lng: 86.65587234118986, name: 'Park Street, Kolkata', crimeType: 'Fraud', hour: 17 },
+    { lat: 22.78090219066896, lng: 79.94748205025707, name: 'Koramangala, Bangalore', crimeType: 'Vandalism', hour: 20 },
+    { lat: 18.40492193823666, lng: 87.17364643479176, name: 'Connaught Place, Delhi', crimeType: 'Theft', hour: 6 },
+    { lat: 14.13676419689802, lng: 86.00878925712793, name: 'MG Road, Bangalore', crimeType: 'Harassment', hour: 21 },
+    { lat: 26.74319837201277, lng: 81.29247063925567, name: 'Viman Nagar, Pune', crimeType: 'Assault', hour: 8 },
+    { lat: 23.76213274245961, lng: 77.45732979605426, name: 'Park Street, Kolkata', crimeType: 'Robbery', hour: 12 },
+    { lat: 18.05947973275112, lng: 82.74516385317852, name: 'Marine Drive, Mumbai', crimeType: 'Fraud', hour: 3 },
+    { lat: 19.04713578984753, lng: 78.22639873421867, name: 'Chandni Chowk, Delhi', crimeType: 'Theft', hour: 19 },
+    { lat: 17.13271087087657, lng: 85.47032978129285, name: 'Connaught Place, Delhi', crimeType: 'Burglary', hour: 2 },
+    { lat: 20.10739583279445, lng: 80.29892483573124, name: 'Koramangala, Bangalore', crimeType: 'Harassment', hour: 0 },
+    { lat: 22.50312697432133, lng: 81.47253241002195, name: 'Viman Nagar, Pune', crimeType: 'Vandalism', hour: 11 },
+    { lat: 14.86259415981385, lng: 77.67921624718944, name: 'MG Road, Bangalore', crimeType: 'Robbery', hour: 23 },
+    { lat: 26.31817423078142, lng: 78.13672174221875, name: 'Marine Drive, Mumbai', crimeType: 'Assault', hour: 16 },
+    { lat: 20.59973172615727, lng: 84.01754132175282, name: 'Chandni Chowk, Delhi', crimeType: 'Burglary', hour: 13 },
+    { lat: 17.05182374594421, lng: 85.68147249379419, name: 'Park Street, Kolkata', crimeType: 'Theft', hour: 4 },
+    { lat: 23.51819592169022, lng: 81.622728353748, name: 'Viman Nagar, Pune', crimeType: 'Fraud', hour: 14 },
+    { lat: 17.70793048732991, lng: 80.1586543926329, name: 'Connaught Place, Delhi', crimeType: 'Harassment', hour: 7 },
+    { lat: 16.5803915403521, lng: 78.65764044813676, name: 'MG Road, Bangalore', crimeType: 'Vandalism', hour: 21 },
+    { lat: 19.53296832772954, lng: 83.84010558659743, name: 'Koramangala, Bangalore', crimeType: 'Burglary', hour: 17 },
+    { lat: 27.00713646341454, lng: 86.60174785374737, name: 'Park Street, Kolkata', crimeType: 'Theft', hour: 6 },
+    { lat: 16.89316046872316, lng: 80.4562847043081, name: 'Viman Nagar, Pune', crimeType: 'Robbery', hour: 9 },
+    { lat: 19.95267808737264, lng: 85.67971348830268, name: 'Marine Drive, Mumbai', crimeType: 'Assault', hour: 10 },
+    { lat: 18.22021538728513, lng: 80.27249140475286, name: 'Chandni Chowk, Delhi', crimeType: 'Harassment', hour: 15 },
+    { lat: 24.50284905832192, lng: 81.1427552111527, name: 'Connaught Place, Delhi', crimeType: 'Vandalism', hour: 11 },
+    { lat: 26.91558062542974, lng: 86.32951916258216, name: 'MG Road, Bangalore', crimeType: 'Burglary', hour: 4 },
+    { lat: 20.0194532721699, lng: 82.88320158746323, name: 'Koramangala, Bangalore', crimeType: 'Fraud', hour: 5 },
+    { lat: 27.96869160339454, lng: 78.37283927916734, name: 'Park Street, Kolkata', crimeType: 'Theft', hour: 13 },
+    { lat: 15.59273182337172, lng: 85.41632515643994, name: 'Viman Nagar, Pune', crimeType: 'Robbery', hour: 0 },
+    { lat: 21.34167017953487, lng: 82.39825438479255, name: 'Marine Drive, Mumbai', crimeType: 'Assault', hour: 7 },
+    { lat: 26.42327052792141, lng: 87.21852349419186, name: 'Chandni Chowk, Delhi', crimeType: 'Burglary', hour: 18 },
+    { lat: 19.16069215847287, lng: 79.61981572943805, name: 'Connaught Place, Delhi', crimeType: 'Vandalism', hour: 8 },
+    { lat: 18.4783824938408, lng: 80.09560424730298, name: 'MG Road, Bangalore', crimeType: 'Fraud', hour: 19 },
+    { lat: 24.59647283118408, lng: 86.54327834608718, name: 'Koramangala, Bangalore', crimeType: 'Robbery', hour: 22 },
+    { lat: 14.37695629856897, lng: 85.36081467402165, name: 'Park Street, Kolkata', crimeType: 'Assault', hour: 16 },
+    { lat: 17.97141076492158, lng: 78.47765756909586, name: 'Viman Nagar, Pune', crimeType: 'Harassment', hour: 20 },
+    { lat: 19.75438521837633, lng: 81.15382902854078, name: 'Marine Drive, Mumbai', crimeType: 'Theft', hour: 3 },
+    { lat: 21.94532612509298, lng: 83.2271095271347, name: 'Chandni Chowk, Delhi', crimeType: 'Fraud', hour: 2 },
+    { lat: 14.82638642927129, lng: 80.89976396485896, name: 'Connaught Place, Delhi', crimeType: 'Vandalism', hour: 14 },
+    { lat: 20.93769094152907, lng: 81.59475168208683, name: 'MG Road, Bangalore', crimeType: 'Burglary', hour: 9 },
+    { lat: 26.16871994807255, lng: 78.52401040831646, name: 'Koramangala, Bangalore', crimeType: 'Assault', hour: 5 },
+    { lat: 24.63575816733118, lng: 83.42038121757404, name: 'Park Street, Kolkata', crimeType: 'Robbery', hour: 12 },
+    { lat: 20.8038971253473, lng: 83.64981781531758, name: 'Viman Nagar, Pune', crimeType: 'Harassment', hour: 13 },
+    { lat: 25.73276185760347, lng: 86.47376119400243, name: 'Marine Drive, Mumbai', crimeType: 'Theft', hour: 16 },
+    { lat: 19.67892573250791, lng: 79.92261537390665, name: 'Chandni Chowk, Delhi', crimeType: 'Fraud', hour: 1 },
+    { lat: 15.43892305110378, lng: 85.08475261524033, name: 'Connaught Place, Delhi', crimeType: 'Assault', hour: 0 },{ lat: 23.76214810427465, lng: 80.92352785268917, name: 'MG Road, Bangalore', crimeType: 'Vandalism', hour: 18 },
+    { lat: 18.827148952736, lng: 82.27367173942137, name: 'Koramangala, Bangalore', crimeType: 'Burglary', hour: 11 },
+    { lat: 25.72384512710864, lng: 85.13568257361732, name: 'Park Street, Kolkata', crimeType: 'Harassment', hour: 5 },
+    { lat: 20.46819521712554, lng: 78.99731241617482, name: 'Viman Nagar, Pune', crimeType: 'Fraud', hour: 7 },
+    { lat: 26.27657340925352, lng: 84.93745105247341, name: 'Marine Drive, Mumbai', crimeType: 'Robbery', hour: 13 },
+    { lat: 19.16278213693721, lng: 85.62014249375863, name: 'Chandni Chowk, Delhi', crimeType: 'Theft', hour: 22 },
+    { lat: 24.34716272019321, lng: 83.58216128057183, name: 'Connaught Place, Delhi', crimeType: 'Assault', hour: 6 },
+    { lat: 14.79832717255891, lng: 78.76592841748274, name: 'MG Road, Bangalore', crimeType: 'Vandalism', hour: 9 },
+    { lat: 17.98346718926153, lng: 83.93461873851923, name: 'Koramangala, Bangalore', crimeType: 'Burglary', hour: 1 },
+    { lat: 21.63217061543567, lng: 86.73197573650154, name: 'Park Street, Kolkata', crimeType: 'Fraud', hour: 17 },
+    { lat: 22.59431891614265, lng: 84.13056270862552, name: 'Viman Nagar, Pune', crimeType: 'Robbery', hour: 19 },
+    { lat: 25.39734829682413, lng: 80.96563724175187, name: 'Marine Drive, Mumbai', crimeType: 'Theft', hour: 15 },
+    { lat: 20.05473917524372, lng: 81.43256287197485, name: 'Chandni Chowk, Delhi', crimeType: 'Assault', hour: 8 },
+    { lat: 18.0921845085402, lng: 80.78957247158214, name: 'Connaught Place, Delhi', crimeType: 'Harassment', hour: 14 },
+    { lat: 22.16065949368277, lng: 82.09176832946021, name: 'MG Road, Bangalore', crimeType: 'Fraud', hour: 12 },
+    { lat: 25.38179471381712, lng: 79.75631286037174, name: 'Koramangala, Bangalore', crimeType: 'Vandalism', hour: 11 },
+    { lat: 16.41506251332583, lng: 85.93521938075896, name: 'Park Street, Kolkata', crimeType: 'Robbery', hour: 10 },
+    { lat: 21.56784738168176, lng: 80.19473829469132, name: 'Viman Nagar, Pune', crimeType: 'Burglary', hour: 16 },
+    { lat: 19.02136273987203, lng: 83.5862136756371, name: 'Marine Drive, Mumbai', crimeType: 'Vandalism', hour: 21 },
+    { lat: 23.85147915726343, lng: 83.15272147368478, name: 'Chandni Chowk, Delhi', crimeType: 'Fraud', hour: 4 },
+    { lat: 20.68512947163558, lng: 79.6017349176341, name: 'Connaught Place, Delhi', crimeType: 'Theft', hour: 18 },
+    { lat: 18.45282769451621, lng: 83.96731918234764, name: 'MG Road, Bangalore', crimeType: 'Robbery', hour: 2 },
+    { lat: 27.32872476189654, lng: 84.80783165129736, name: 'Koramangala, Bangalore', crimeType: 'Assault', hour: 12 },
+    { lat: 22.37076591356103, lng: 80.62195823439562, name: 'Park Street, Kolkata', crimeType: 'Harassment', hour: 17 },
+    { lat: 24.79356791321028, lng: 78.125894781926, name: 'Viman Nagar, Pune', crimeType: 'Vandalism', hour: 23 },
+    { lat: 16.27468519273464, lng: 83.25491587258992, name: 'Marine Drive, Mumbai', crimeType: 'Burglary', hour: 20 },
+    { lat: 21.03149763172053, lng: 85.6792385643129, name: 'Chandni Chowk, Delhi', crimeType: 'Fraud', hour: 0 },
+    { lat: 23.25893721653456, lng: 78.59814281718484, name: 'Connaught Place, Delhi', crimeType: 'Theft', hour: 3 },
+    { lat: 17.74319652453208, lng: 79.50271839427186, name: 'MG Road, Bangalore', crimeType: 'Vandalism', hour: 7 },
+    { lat: 19.9748376518743, lng: 85.6294312735926, name: 'Koramangala, Bangalore', crimeType: 'Burglary', hour: 16 },
+    { lat: 13.0826802, lng: 80.2707184, name: 'T Nagar, Chennai', crimeType: 'Fraud', hour: 9 },
+    { lat: 12.9715987, lng: 77.5945627, name: 'Indiranagar, Bangalore', crimeType: 'Robbery', hour: 13 },
+    { lat: 12.2958104, lng: 76.6393805, name: 'Vijayanagar, Mysore', crimeType: 'Theft', hour: 11 },
+    { lat: 9.9252007, lng: 78.1197754, name: 'Madurai Main, Madurai', crimeType: 'Assault', hour: 6 },
+    { lat: 11.0168445, lng: 76.9558321, name: 'Gandhipuram, Coimbatore', crimeType: 'Burglary', hour: 15 },
+    { lat: 17.385044, lng: 78.486671, name: 'Banjara Hills, Hyderabad', crimeType: 'Vandalism', hour: 14 },
+    { lat: 8.5241391, lng: 76.9366376, name: 'Kowdiar, Thiruvananthapuram', crimeType: 'Harassment', hour: 17 },
+    { lat: 15.8281257, lng: 78.0372792, name: 'Rayachoti, Andhra Pradesh', crimeType: 'Fraud', hour: 8 },
+    { lat: 13.067439, lng: 80.237617, name: 'Nungambakkam, Chennai', crimeType: 'Theft', hour: 10 },
+    { lat: 12.9141421, lng: 74.856032, name: 'Kadri, Mangalore', crimeType: 'Robbery', hour: 12 },
+    { lat: 10.5276416, lng: 76.2144349, name: 'Thrissur, Kerala', crimeType: 'Assault', hour: 16 },
+    { lat: 16.5061743, lng: 80.6480153, name: 'Benz Circle, Vijayawada', crimeType: 'Burglary', hour: 21 },
+    { lat: 13.3391682, lng: 74.7421421, name: 'Manipal, Udupi', crimeType: 'Fraud', hour: 11 },
+    { lat: 11.410202, lng: 76.695038, name: 'Ooty, Tamil Nadu', crimeType: 'Vandalism', hour: 7 },
+    { lat: 15.3172775, lng: 75.7138884, name: 'Hubli, Karnataka', crimeType: 'Harassment', hour: 19 },
+    { lat: 14.4425987, lng: 79.9864564, name: 'Nellore, Andhra Pradesh', crimeType: 'Theft', hour: 22 },
+    { lat: 12.8234479, lng: 80.0458006, name: 'Mahabalipuram, Tamil Nadu', crimeType: 'Robbery', hour: 20 },
+    { lat: 9.9312328, lng: 76.2673041, name: 'Kochi Fort, Kochi', crimeType: 'Assault', hour: 5 },
+    { lat: 16.7105699, lng: 77.975564, name: 'Raichur, Karnataka', crimeType: 'Burglary', hour: 18 },
+    { lat: 11.2587531, lng: 75.78041, name: 'Kozhikode Beach, Kozhikode', crimeType: 'Vandalism', hour: 6 },
+    { lat: 12.3073346, lng: 76.6497075, name: 'Chamarajapuram, Mysore', crimeType: 'Fraud', hour: 14 },
+    { lat: 10.0889335, lng: 77.0595242, name: 'Kumily, Tamil Nadu', crimeType: 'Theft', hour: 15 },
+    { lat: 17.6868159, lng: 83.2184833, name: 'Dwaraka Nagar, Visakhapatnam', crimeType: 'Harassment', hour: 9 },
+    { lat: 10.5276416, lng: 76.2144349, name: 'West Fort, Thrissur', crimeType: 'Robbery', hour: 12 },
+    { lat: 11.1085242, lng: 77.3410656, name: 'Tiruppur, Tamil Nadu', crimeType: 'Assault', hour: 16 },
+    { lat: 12.9715987, lng: 77.5945627, name: 'MG Road, Bangalore', crimeType: 'Burglary', hour: 23 },
+    { lat: 11.6643251, lng: 78.1460142, name: 'Salem Junction, Salem', crimeType: 'Fraud', hour: 5 },
+    { lat: 15.8281257, lng: 78.0372792, name: 'Kadapa, Andhra Pradesh', crimeType: 'Vandalism', hour: 22 },
+    { lat: 13.0826802, lng: 80.2707184, name: 'Mylapore, Chennai', crimeType: 'Harassment', hour: 7 },
+    { lat: 8.8932118, lng: 76.6141396, name: 'Nagercoil, Tamil Nadu', crimeType: 'Theft', hour: 13 }
+];
+
+        // Add crime hotspots as markers and draw "no-go zones" around them (e.g., circles of 500m radius)
+        crimeHotspots.forEach(function (hotspot) {
+            var hotspotMarker = L.marker([hotspot.lat, hotspot.lng]).addTo(map);
+            hotspotMarker.bindPopup("<b>Location:</b> " + hotspot.name + "<br><b>Crime Type:</b> " + hotspot.crimeType + "<br><b>Hour:</b> " + hotspot.hour);
+
+            // Add a circle around the hotspot to define a "no-go" zone
+            var avoidCircle = L.circle([hotspot.lat, hotspot.lng], {
+                color: 'red',
+                fillColor: '#f03',
+                fillOpacity: 0.5,
+                radius: 500 // 500 meters avoidance radius, can be adjusted
+            }).addTo(map);
+        });
+
+        // Function to check if a location is near a crime hotspot by distance
+        function isNearCrimeHotspot(lat, lng) {
+            var safeDistance = 0.5; // Avoidance distance in kilometers (0.5 = 500 meters)
+            return crimeHotspots.some(function (hotspot) {
+                var distance = map.distance([lat, lng], [hotspot.lat, hotspot.lng]) / 1000; // Convert to km
+                return distance < safeDistance;
+            });
+        }
+
+        // Custom routing function to avoid crime hotspots
+        function customRouting(start, end, desiredEnd = null) {
+            if (routeControl) {
+                map.removeControl(routeControl); // Clear previous route
+            }
+
+            // Create a custom OSRM route avoiding any hotspots
+            routeControl = L.Routing.control({
+                waypoints: [start, end],
+                lineOptions: {
+                    styles: [{ color: 'blue', weight: 6 }]
+                },
+                createMarker: function (i, wp) {
+                    return L.marker(wp.latLng, { draggable: true });
+                },
+                router: L.Routing.osrmv1({
+                    serviceUrl: 'https://router.project-osrm.org/route/v1',
+                    profile: 'car'
+                }),
+                routeWhileDragging: true,
+                altLineOptions: {
+                    styles: [{ color: 'green', weight: 4 }]
+                },
+                allowUTurns: false
+            }).on('routesfound', function (e) {
+                var routes = e.routes;
+                var validRouteFound = false;
+
+                // Check each route to ensure they don't intersect with any hotspots
+                for (var i = 0; i < routes.length; i++) {
+                    var routeLatLngs = routes[i].coordinates;
+
+                    // Check if any point in the route intersects with hotspots
+                    var intersects = routeLatLngs.some(function (point) {
+                        return isNearCrimeHotspot(point.lat, point.lng);
+                    });
+
+                    // If the route does not intersect with hotspots, it's valid
+                    if (!intersects) {
+                        validRouteFound = true;
+                        routeControl.setWaypoints([start, end]); // Add the valid route to the map
+
+                        if (desiredEnd) {
+                            findRouteBetweenAlternateAndDesired(end, desiredEnd);
+                        }
+
+                        // Add safe shelters along the optimized route
+                        addSafeShelters(routes[i]);
+                        break;
+                    }
+                }
+
+                if (!validRouteFound) {
+                    findAlternativeRoute(start, end, desiredEnd);
+                }
+            }).addTo(map);
+        }
+
+        // Function to find an alternative route
+        function findAlternativeRoute(start, end, desiredEnd) {
+            const offsets = [0.01, -0.01, 0.02, -0.02];
+
+            for (let latOffset of offsets) {
+                for (let lngOffset of offsets) {
+                    const newEnd = L.latLng(end.lat + latOffset, end.lng + lngOffset);
+
+                    if (!isNearCrimeHotspot(newEnd.lat, newEnd.lng)) {
+                        customRouting(start, newEnd, desiredEnd);
+                        return;
+                    }
+                }
+            }
+
+            alert('No valid route found, even with alternatives.');
+        }
+
+        // Function to create a second route from the alternate endpoint to the desired destination
+        function findRouteBetweenAlternateAndDesired(alternateEnd, desiredEnd) {
+            if (isNearCrimeHotspot(alternateEnd.lat, alternateEnd.lng) || isNearCrimeHotspot(desiredEnd.lat, desiredEnd.lng)) {
+                alert('The alternate endpoint or desired endpoint is near a crime hotspot. Finding an alternative route.');
+                findAlternativeRoute(alternateEnd, desiredEnd);
+                return;
+            }
+
+            L.Routing.control({
+                waypoints: [alternateEnd, desiredEnd],
+                lineOptions: {
+                    styles: [{ color: 'orange', weight: 6 }]
+                },
+                createMarker: function (i, wp) {
+                    return L.marker(wp.latLng, { draggable: true });
+                },
+                router: L.Routing.osrmv1({
+                    serviceUrl: 'https://router.project-osrm.org/route/v1',
+                    profile: 'car'
+                }),
+                routeWhileDragging: true,
+                allowUTurns: false
+            }).addTo(map);
+        }
+
+        // Function to add two safe shelters along the optimized route
+        function addSafeShelters(route) {
+            var shelter1LatLng = route.coordinates[Math.floor(route.coordinates.length / 3)]; // Place shelter 1 at 1/3rd point
+            var shelter2LatLng = route.coordinates[Math.floor(route.coordinates.length * 2 / 3)]; // Place shelter 2 at 2/3rd point
+
+            // Safe shelter marker icon (green marker)
+            var safeShelterIcon = L.icon({
+                iconUrl: 'https://upload.wikimedia.org/wikipedia/commons/6/6f/Color_icon_green.svg',
+                iconSize: [30, 30] // Adjust size as necessary
+            });
+
+            // Add markers for both shelters
+            L.marker([shelter1LatLng.lat, shelter1LatLng.lng], { icon: safeShelterIcon })
+                .bindPopup("Safe Shelter 1").addTo(map);
+
+            L.marker([shelter2LatLng.lat, shelter2LatLng.lng], { icon: safeShelterIcon })
+                .bindPopup("Safe Shelter 2").addTo(map);
+        }
+
+        // Handle map click to set start and end points
+        map.on('click', function (e) {
+            if (previousEndMarker) {
+                previousEndMarker.remove(); // Remove the previous end marker
+            }
+            previousEndLocation = e.latlng; // Save the end location for potential route optimization
+            endMarker = L.marker(e.latlng).addTo(map).bindPopup("End Location").openPopup();
+
+            customRouting(currentPosition, e.latlng); // Start the routing logic from current position to the clicked point
+        });
+    </script>
+</body>
+
+</html>
